@@ -12,11 +12,16 @@ func TestSubscription(t *testing.T) {
 	Convey("When creating a subscription", t, func() {
 		s, _ := NewSubscription("07051368923", "Rua Luciano Gualberto, 300", "Rua Almeida Prado, 21", "555123459994032", "john.doe@gmail.com", "+5511987726423")
 		dbCfg := DBConfig()
-		fmt.Println("%v", dbCfg)
 		db := postgres.GetDatabase(dbCfg)
-		err := s.Save(db)
-		Convey("Subscription is saved successfully", func() {
+		err := s.Create(db)
+		Convey("We can create a subscription successfully", func() {
 			So(err, ShouldEqual, nil)
+		})
+		Convey("We can retrieve a saved subscription", func() {
+			var newSub Subscription
+			GetSubscription("john.doe@gmail.com", &newSub, db)
+			fmt.Println(newSub)
+			So(newSub.CPF, ShouldEqual, s.CPF)
 		})
 	})
 }
