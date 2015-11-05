@@ -12,3 +12,7 @@ func GetSubscription(email string, s *Subscription, db *gorm.DB) error {
 func (s *Subscription) Create(db *gorm.DB) error {
 	return db.FirstOrCreate(s).Error
 }
+
+func (s *Subscription) Save(db *gorm.DB) error {
+	return db.Save(s).Error
+}

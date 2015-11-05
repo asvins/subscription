@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/asvins/common_db/postgres"
@@ -20,8 +19,14 @@ func TestSubscription(t *testing.T) {
 		Convey("We can retrieve a saved subscription", func() {
 			var newSub Subscription
 			GetSubscription("john.doe@gmail.com", &newSub, db)
-			fmt.Println(newSub)
 			So(newSub.CPF, ShouldEqual, s.CPF)
+		})
+		Convey("We can update an already saved subscription", func() {
+			var newSub Subscription
+			s.CPF = "newcpf"
+			s.Save(db)
+			GetSubscription("john.doe@gmail.com", &newSub, db)
+			So(newSub.CPF, ShouldEqual, "newcpf")
 		})
 	})
 }
