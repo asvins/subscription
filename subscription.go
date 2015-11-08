@@ -20,3 +20,8 @@ func (s *Subscription) Create(db *gorm.DB) error {
 func (s *Subscription) Save(db *gorm.DB) error {
 	return db.Save(s).Error
 }
+
+func GetSubscriptions(page int, subs *[]Subscription, db *gorm.DB) error {
+	pageSize := 10
+	return db.Limit(10).Offset(pageSize * page).Find(subs).Error
+}

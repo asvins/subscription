@@ -23,6 +23,10 @@ func DefRoutes() *router.Router {
 	r := router.NewRouter()
 
 	r.AddRoute("/api/discovery", router.GET, DiscoveryHandler)
+	r.AddRoute("/api/subscription/show", router.GET, SubscriptionShowHandler)
+	r.AddRoute("/api/subscription/list", router.GET, SubscriptionListHandler)
+	r.AddRoute("/api/subscription/new", router.POST, SubscriptionNewHandler)
+	//	r.AddRoute("/api/subscription/pay", router.POST, SubscriptionPayHandler)
 
 	// interceptors
 	r.AddBaseInterceptor("/", logger.NewLogger())
