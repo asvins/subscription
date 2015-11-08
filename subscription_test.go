@@ -28,5 +28,6 @@ func TestSubscription(t *testing.T) {
 			GetSubscription("john.doe@gmail.com", &newSub, db)
 			So(newSub.CPF, ShouldEqual, "newcpf")
 		})
+		db.Exec("TRUNCATE TABLE subscriptions")
 	})
 }

@@ -6,9 +6,9 @@ import (
 )
 
 const (
-	PaymentStatusOK = iota
+	PaymentStatusOpen = iota
 	PaymentStatusDelayed
-	PaymentStatusOpen
+	PaymentStatusOK
 )
 
 type Subscription struct {
@@ -29,9 +29,9 @@ func NewSubscription(cpf, address, deliveryAddress, creditCardNumber, email, pho
 
 type Subscriber struct {
 	Email         string    `json:"email" gorm:"column:email;primary_key"`
-	LastPayed     time.Time `json:"last_payed" gorm:"column:last_payed"`
-	NextPayment   time.Time `json:"next_payment" gorm:"column:next_payment"`
-	PaymentStatus int       `json:"payment_status" gorm:"column:payment_status"`
+	LastPayed     time.Time `json:"last_payed"`
+	NextPayment   time.Time `json:"next_payment"`
+	PaymentStatus int       `json:"payment_status" gorm:"column:payment_status;default:0"`
 }
 
 func NewSubscriber(email string, lastPayed, nextPayment time.Time, paymentStatus int) (*Subscriber, error) {
