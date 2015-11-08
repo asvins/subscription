@@ -11,9 +11,10 @@ import (
 
 func TestSubscriber(t *testing.T) {
 	Convey("When creating a subscriber", t, func() {
+		email := "john.doe@example.com"
 		lastPayed := time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC)
 		nextPayment := time.Date(2009, time.December, 10, 23, 0, 0, 0, time.UTC)
-		s, _ := NewSubscriber("john.doe@example.com", lastPayed, nextPayment, PaymentStatusDelayed)
+		s, _ := NewSubscriber(email, lastPayed, nextPayment, PaymentStatusDelayed)
 		dbCfg := DBConfig()
 		db := postgres.GetDatabase(dbCfg)
 		err := s.Create(db)
@@ -22,7 +23,7 @@ func TestSubscriber(t *testing.T) {
 		})
 		Convey("We can retrieve a saved subscriber", func() {
 			var newSub Subscriber
-			GetSubscriber("john.doe@example.com", &newSub, db)
+			GetSubscriber(email, &newSub, db)
 			fmt.Println(newSub)
 			So(newSub.LastPayed.Unix(), ShouldEqual, s.LastPayed.Unix())
 		})
@@ -32,7 +33,7 @@ func TestSubscriber(t *testing.T) {
 			s.LastPayed = t
 			s.NextPayment = t.AddDate(0, 1, 0)
 			s.Save(db)
-			GetSubscriber("john.doe@example.com", &newSub, db)
+			GetSubscriber(email, &newSub, db)
 			So(newSub.LastPayed.Unix(), ShouldEqual, t.Unix())
 		})
 		db.Exec("TRUNCATE TABLE subscribers")
