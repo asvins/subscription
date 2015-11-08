@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
@@ -24,7 +23,6 @@ func TestSubscriber(t *testing.T) {
 		Convey("We can retrieve a saved subscriber", func() {
 			var newSub Subscriber
 			GetSubscriber(email, &newSub, db)
-			fmt.Println(newSub)
 			So(newSub.LastPayed.Unix(), ShouldEqual, s.LastPayed.Unix())
 		})
 		Convey("We can update an already saved subscriber", func() {
