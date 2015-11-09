@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/asvins/common_db/postgres"
 	"github.com/unrolled/render"
@@ -62,7 +64,47 @@ func SubscriptionNewHandler(w http.ResponseWriter, req *http.Request) {
 	w.Header().Add("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS, HEAD")
 	w.Header().Add("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept")
 
-	//db := postgres.GetDatabase(DBConfig())
+	db := postgres.GetDatabase(DBConfig())
+	var s Subscription
+
+	decoder := json.NewDecoder(req.Body)
+	if err := decoder.Decode(&s); err != nil {
+		http.Error(w, "Invalid parameters", 400)
+		return
+	}
+
+	sub, err := NewSubscriber(s.Email, time.Now(), time.Now().AddDate(0, 1, 0), PaymentStatusOK)
+	if s.Create(db) != nil || sub.Create(db) != nil || err != nil {
+		http.Error(w, "Service Unavailable", 503)
+		return
+	}
 
 	r.JSON(w, http.StatusCreated, "{}")
+}
+
+func PayHandler(w http.ResponseWriter, req *http.Request) {
+	r := render.New()
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Add("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS, HEAD")
+	w.Header().Add("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept")
+
+	db := postgres.GetDatabase(DBConfig())
+
+	if req.ParseForm() != nil || req.FormValue("email") == "" {
+		http.Error(w, "Invalid Input", 400)
+		return
+	}
+
+	email := req.FormValue("email")
+	var sub Subscription
+	var s Subscriber
+	var p PaymentManager
+
+	if GetSubscription(email, &sub, db) != nil || GetSubscriber(email, &s, db) != nil || p.Pay(&s, sub, db) != nil {
+		http.Error(w, "Not Found", 404)
+		return
+	}
+
+	r.JSON(w, http.StatusOK, "{}")
 }
