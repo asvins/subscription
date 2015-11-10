@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/asvins/common_interceptors/logger"
 	"github.com/asvins/router"
+	"github.com/asvins/router/logger"
 	"github.com/unrolled/render"
 )
 
