@@ -22,6 +22,7 @@ func init() {
 		log.Fatal(err)
 	}
 
+	setupCommonIo()
 	fmt.Println("[INFO] Initialization Done!")
 }
 
