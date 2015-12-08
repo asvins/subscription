@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -79,6 +80,13 @@ func SubscriptionNewHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	b, err := json.Marshal(&s)
+	if err != nil {
+		fmt.Println(err.Error())
+	} else {
+		producer.Publish("subscription_updated", b)
+	}
+
 	r.JSON(w, http.StatusCreated, "{}")
 }
 
@@ -104,6 +112,13 @@ func PayHandler(w http.ResponseWriter, req *http.Request) {
 	if GetSubscription(email, &sub, db) != nil || GetSubscriber(email, &s, db) != nil || p.Pay(&s, sub, db) != nil {
 		http.Error(w, "Not Found", 404)
 		return
+	}
+
+	b, err := json.Marshal(&s)
+	if err != nil {
+		fmt.Println(err.Error())
+	} else {
+		producer.Publish("subscription_updated", b)
 	}
 
 	r.JSON(w, http.StatusOK, "{}")
