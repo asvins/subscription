@@ -114,12 +114,8 @@ func PayHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	b, err := json.Marshal(&s)
-	if err != nil {
-		fmt.Println(err.Error())
-	} else {
-		producer.Publish("subscription_updated", b)
-	}
+	sendSubscriptionUpdated(&sub)
+	sendSubscriptionPaid(&sub)
 
 	r.JSON(w, http.StatusOK, "{}")
 }

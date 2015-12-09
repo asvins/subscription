@@ -61,3 +61,23 @@ func handleUserCreated(msg []byte) {
 		subs.Create(db)
 	}
 }
+
+func sendSubscriptionPaid(subscription *Subscription) {
+	b, err := json.Marshal(subscription)
+	if err != nil {
+		fmt.Println("[ERROR] ", err.Error())
+		return
+	}
+
+	producer.Publish("subscription_paid", b)
+}
+
+func sendSubscriptionUpdated(subscription *Subscription) {
+	b, err := json.Marshal(subscription)
+	if err != nil {
+		fmt.Println("[ERROR] ", err.Error())
+		return
+	}
+
+	producer.Publish("subscription_updated", b)
+}
