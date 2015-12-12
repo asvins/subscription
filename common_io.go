@@ -96,7 +96,7 @@ func handleUserCreated(msg []byte) {
 			return
 		}
 
-		subscriber, err := NewSubscriber(usr.Email, time.Now(), time.Now().AddDate(0, 1, 0), PaymentStatusOpen)
+		subscriber, err := NewSubscriber(usr.ID, usr.Email, time.Now(), time.Now().AddDate(0, 1, 0), PaymentStatusOpen)
 		if err != nil {
 			fmt.Println("[ERROR]", err.Error())
 			return

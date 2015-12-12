@@ -74,7 +74,7 @@ func SubscriptionNewHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	sub, err := NewSubscriber(s.Email, time.Now(), time.Now().AddDate(0, 1, 0), PaymentStatusOK)
+	sub, err := NewSubscriber(0, s.Email, time.Now(), time.Now().AddDate(0, 1, 0), PaymentStatusOK)
 	if s.Create(db) != nil || sub.Create(db) != nil || err != nil {
 		http.Error(w, "Service Unavailable", 503)
 		return

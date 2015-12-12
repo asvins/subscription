@@ -38,11 +38,11 @@ type Subscriber struct {
 	PaymentStatus int       `json:"payment_status" gorm:"column:payment_status;default:0"`
 }
 
-func NewSubscriber(email string, lastPayed, nextPayment time.Time, paymentStatus int) (*Subscriber, error) {
+func NewSubscriber(patientId int, email string, lastPayed, nextPayment time.Time, paymentStatus int) (*Subscriber, error) {
 	if email == "" {
 		return nil, errors.New("Invalid Input")
 	}
-	return &Subscriber{Email: email, LastPayed: lastPayed, NextPayment: nextPayment, PaymentStatus: paymentStatus}, nil
+	return &Subscriber{PatientId: patientId, Email: email, LastPayed: lastPayed, NextPayment: nextPayment, PaymentStatus: paymentStatus}, nil
 }
 
 func (s *Subscriber) RetrieveSubscriber(db *gorm.DB) (*Subscriber, error) {
