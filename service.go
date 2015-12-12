@@ -119,3 +119,28 @@ func PayHandler(w http.ResponseWriter, req *http.Request) {
 
 	r.JSON(w, http.StatusOK, "{}")
 }
+
+func retrievePaymentStatus(w http.ResponseWriter, req *http.Request) {
+	r := render.New()
+	db := postgres.GetDatabase(DBConfig())
+	subs := &Subscriber{}
+
+	patient_id, err := strconv.Atoi(req.URL.Query().Get("id"))
+	if err != nil {
+		http.Error(w, err.Error(), 400)
+		return
+	}
+
+	subs.PatientId = patient_id
+	subs, err = subs.RetrieveSubscriber(db)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	if subs.PaymentStatus == PaymentStatusOK {
+		r.JSON(w, http.StatusOK, "{}")
+	} else {
+		r.JSON(w, http.StatusNotFound, "{}")
+	}
+}

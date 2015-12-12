@@ -27,6 +27,7 @@ func DefRoutes() *router.Router {
 	r.AddRoute("/api/subscription/list", router.GET, SubscriptionListHandler)
 	r.AddRoute("/api/subscription/new", router.POST, SubscriptionNewHandler)
 	r.AddRoute("/api/subscription/pay", router.POST, PayHandler)
+	r.AddRoute("/api/subscriber/:id/paymentstatus", router.GET, retrievePaymentStatus)
 
 	// interceptors
 	r.AddBaseInterceptor("/", logger.NewLogger())

@@ -3,6 +3,8 @@ package main
 import (
 	"errors"
 	"time"
+
+	"github.com/jinzhu/gorm"
 )
 
 const (
@@ -29,6 +31,7 @@ func NewSubscription(cpf, address, deliveryAddress, creditCardNumber, email, pho
 }
 
 type Subscriber struct {
+	PatientId     int       `json:"patient_id"`
 	Email         string    `json:"email" gorm:"column:email;primary_key"`
 	LastPayed     time.Time `json:"last_payed"`
 	NextPayment   time.Time `json:"next_payment"`
@@ -40,6 +43,19 @@ func NewSubscriber(email string, lastPayed, nextPayment time.Time, paymentStatus
 		return nil, errors.New("Invalid Input")
 	}
 	return &Subscriber{Email: email, LastPayed: lastPayed, NextPayment: nextPayment, PaymentStatus: paymentStatus}, nil
+}
+
+func (s *Subscriber) RetrieveSubscriber(db *gorm.DB) (*Subscriber, error) {
+	subscribers := []Subscriber{}
+	if err := db.Where(s).Find(&subscribers).Error; err != nil {
+		return nil, err
+	}
+
+	if len(subscribers) != 1 {
+		return nil, errors.New("[FATAL] Database is inconsistent. More then one subscriber associated with the same pacient_id")
+	}
+
+	return &subscribers[0], nil
 }
 
 type Payer interface {
