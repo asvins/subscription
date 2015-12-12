@@ -10,6 +10,8 @@ import (
 	authModels "github.com/asvins/auth/models"
 	"github.com/asvins/common_db/postgres"
 	"github.com/asvins/common_io"
+	tm "github.com/asvins/core/models"
+	"github.com/asvins/notification/mailer"
 	"github.com/asvins/utils/config"
 )
 
@@ -38,6 +40,7 @@ func setupCommonIo() {
 	*	Topics
 	 */
 	consumer.HandleTopic("user_created", handleUserCreated)
+	consumer.HandleTopic("treatment_created", handleTreatmentCreated)
 
 	if err = consumer.StartListening(); err != nil {
 		log.Fatal(err)
@@ -47,6 +50,34 @@ func setupCommonIo() {
 /*
 *	Handlers
  */
+func handleTreatmentCreated(msg []byte) {
+	t := tm.Treatment{}
+	err := json.Unmarshal(msg, &t)
+
+	if err != nil {
+		fmt.Println("[ERROR] ", err.Error())
+		return
+	}
+	var s Subscriber
+	db := postgres.GetDatabase(DBConfig())
+
+	err = GetSubscriberByPatient(strconv.Itoa(t.PatientId), &s, db)
+	if err != nil {
+		fmt.Println("[ERROR] ", err.Error())
+		return
+	}
+	if s.PaymentStatus == PaymentStatusOpen {
+		m := mailer.Mail{
+			To:      []string{s.Email},
+			Subject: "Dados Atualizados",
+			Body:    mailer.TemplateFinishProfile,
+		}
+		mailMsg, _ := json.Marshal(m)
+		producer.Publish("send_mail", mailMsg)
+	}
+
+}
+
 func handleUserCreated(msg []byte) {
 	usr := authModels.User{}
 	err := json.Unmarshal(msg, &usr)
