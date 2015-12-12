@@ -61,7 +61,7 @@ func handleTreatmentCreated(msg []byte) {
 	var s Subscriber
 	db := postgres.GetDatabase(DBConfig())
 
-	err = GetSubscriberByPatient(strconv.Itoa(t.PatientId), &s, db)
+	err = GetSubscriberByPatient(t.PatientId, &s, db)
 	if err != nil {
 		fmt.Println("[ERROR] ", err.Error())
 		return
