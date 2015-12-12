@@ -69,7 +69,7 @@ func handleTreatmentCreated(msg []byte) {
 	if s.PaymentStatus == PaymentStatusOpen {
 		m := mailer.Mail{
 			To:      []string{s.Email},
-			Subject: "Dados Atualizados",
+			Subject: "Atualize seus dados!",
 			Body:    mailer.TemplateFinishProfile,
 		}
 		mailMsg, _ := json.Marshal(m)
