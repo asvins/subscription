@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"time"
 
 	authModels "github.com/asvins/auth/models"
 	"github.com/asvins/common_db/postgres"
@@ -52,13 +53,27 @@ func handleUserCreated(msg []byte) {
 
 	if err != nil {
 		fmt.Println("[ERROR] ", err.Error())
+		return
 	}
 
 	if usr.Scope == "patient" {
 		subs := Subscription{Owner: strconv.Itoa(usr.ID), Email: usr.Email}
 
 		db := postgres.GetDatabase(DBConfig())
-		subs.Create(db)
+		if err := subs.Create(db); err != nil {
+			fmt.Println("[ERROR] ", err.Error())
+			return
+		}
+
+		subscriber, err := NewSubscriber(usr.Email, time.Now(), time.Now().AddDate(0, 1, 0), PaymentStatusOpen)
+		if err != nil {
+			fmt.Println("[ERROR]", err.Error())
+			return
+		}
+		if err := subscriber.Create(db); err != nil {
+			fmt.Println("[ERROR] ", err.Error())
+			return
+		}
 	}
 }
 
