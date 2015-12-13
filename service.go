@@ -115,7 +115,6 @@ func PayHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	sendSubscriptionUpdated(&sub)
 	sendSubscriptionPaid(&sub)
 
 	r.JSON(w, http.StatusOK, "{}")
@@ -162,6 +161,8 @@ func updateSubscription(w http.ResponseWriter, req *http.Request) errors.Http {
 	if err := subs.UpdateByEmail(email, db); err != nil {
 		return errors.InternalServerError(err.Error())
 	}
+
+	sendSubscriptionUpdated(&subs)
 
 	rend := render.New()
 	rend.JSON(w, http.StatusOK, subs)
