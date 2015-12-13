@@ -22,11 +22,15 @@ func DiscoveryHandler(w http.ResponseWriter, req *http.Request) {
 func DefRoutes() *router.Router {
 	r := router.NewRouter()
 
+	//subscription
 	r.AddRoute("/api/discovery", router.GET, DiscoveryHandler)
 	r.AddRoute("/api/subscription/show", router.GET, SubscriptionShowHandler)
 	r.AddRoute("/api/subscription/list", router.GET, SubscriptionListHandler)
 	r.AddRoute("/api/subscription/new", router.POST, SubscriptionNewHandler)
 	r.AddRoute("/api/subscription/pay", router.POST, PayHandler)
+	r.Handle("/api/subscription", router.PUT, updateSubscription, []router.Interceptor{})
+
+	//subscriber
 	r.AddRoute("/api/subscriber/:id/paymentstatus", router.GET, retrievePaymentStatus)
 
 	// interceptors

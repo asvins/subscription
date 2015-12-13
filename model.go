@@ -23,6 +23,10 @@ type Subscription struct {
 	Phone            string `json:"phone"`
 }
 
+func (subs *Subscription) UpdateByEmail(email string, db *gorm.DB) error {
+	return db.Where("email = ?", email).Save(subs).Error
+}
+
 func NewSubscription(cpf, address, deliveryAddress, creditCardNumber, email, phone string) (*Subscription, error) {
 	if cpf == "" || email == "" || deliveryAddress == "" || creditCardNumber == "" {
 		return nil, errors.New("Invalid Input")

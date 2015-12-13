@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/asvins/common_db/postgres"
+	"github.com/asvins/router/errors"
 	"github.com/unrolled/render"
 )
 
@@ -143,4 +144,26 @@ func retrievePaymentStatus(w http.ResponseWriter, req *http.Request) {
 	} else {
 		r.JSON(w, http.StatusNotFound, "{}")
 	}
+}
+
+func updateSubscription(w http.ResponseWriter, req *http.Request) errors.Http {
+	subs := Subscription{}
+
+	if err := BuildStructFromReqBody(&subs, req.Body); err != nil {
+		return errors.BadRequest("[ERROR] Malformed request body")
+	}
+
+	email := req.URL.Query().Get("email")
+	if email == "" {
+		return errors.BadRequest("[ERROR] email is mandatory")
+	}
+
+	db := postgres.GetDatabase(DBConfig())
+	if err := subs.UpdateByEmail(email, db); err != nil {
+		return errors.InternalServerError(err.Error())
+	}
+
+	rend := render.New()
+	rend.JSON(w, http.StatusOK, subs)
+	return nil
 }
