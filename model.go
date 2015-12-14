@@ -35,6 +35,7 @@ func NewSubscription(cpf, address, deliveryAddress, creditCardNumber, email, pho
 }
 
 type Subscriber struct {
+	Base
 	PatientId     int       `json:"patient_id"`
 	Email         string    `json:"email" gorm:"column:email;primary_key"`
 	LastPayed     time.Time `json:"last_payed"`
@@ -60,6 +61,17 @@ func (s *Subscriber) RetrieveSubscriber(db *gorm.DB) (*Subscriber, error) {
 	}
 
 	return &subscribers[0], nil
+}
+
+func (s *Subscriber) Retrieve(db *gorm.DB) ([]Subscriber, error) {
+	subs := []Subscriber{}
+	err := db.Where(s).Find(&subs, s.Base.BuildQuery()).Error
+
+	return subs, err
+}
+
+func (s *Subscriber) Update(db *gorm.DB) error {
+	return db.Save(s).Error
 }
 
 type Payer interface {

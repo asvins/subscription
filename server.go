@@ -22,7 +22,16 @@ func init() {
 		log.Fatal(err)
 	}
 
+	/*
+	*	Common io
+	 */
 	setupCommonIo()
+
+	/*
+	*	Module crons
+	 */
+	startPaymentVerificationCron()
+
 	fmt.Println("[INFO] Initialization Done!")
 }
 
