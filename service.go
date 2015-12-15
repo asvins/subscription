@@ -138,6 +138,7 @@ func retrievePaymentStatus(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	// Gambeta sinixtra
 	if subs.PaymentStatus == PaymentStatusOK {
 		r.JSON(w, http.StatusOK, "{}")
 	} else {
