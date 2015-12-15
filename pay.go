@@ -13,6 +13,8 @@ func (p PaymentManager) Pay(s *Subscriber, sub Subscription, db *gorm.DB) error 
 	if !p.isValidCreditCard(sub) {
 		return errors.New("Invalid Input")
 	}
+
+	s.PaymentStatus = PaymentStatusOK
 	s.NextPayment = s.LastPayed.AddDate(0, 1, 0)
 	s.LastPayed = time.Now()
 	return s.Save(db)
